@@ -1113,20 +1113,17 @@ Entity *  bbCreateSprite( Entity *p ){
 }
 
 Entity *  bbLoadSprite( BBStr *file,int flags,Entity *p ){
-	debugParent(p);	
+	debugParent(p);
 	Texture t( *file,flags );
-	
 	delete file;if( !t.getCanvas(0) ) return 0;
 	Sprite *s=d_new Sprite();
-	
 	s->setTexture( 0,t,0 );
-	
 	s->setFX( gxScene::FX_FULLBRIGHT );
 
 	if( flags & gxCanvas::CANVAS_TEX_MASK ) s->setBlend( gxScene::BLEND_REPLACE );
 	else if( flags & gxCanvas::CANVAS_TEX_ALPHA ) s->setBlend( gxScene::BLEND_ALPHA );
 	else s->setBlend( gxScene::BLEND_ADD );
-	
+
 	return insertEntity( s,p );
 }
 

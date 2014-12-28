@@ -31,7 +31,7 @@ static Type *typeof( int c ){
 static int curr;
 static string text;
 
-static int next( istream &in ){
+static int bnext( istream &in ){
 
 	text="";
 
@@ -85,13 +85,14 @@ static const char *linkRuntime(){
 		int start=0,end;
 		Type *t=Type::void_type;
 		if( !isalpha( s[0] ) ){ start=1;t=typeof( s[0] ); }
-		for( int k=1;k<s.size();++k ){
+		int k;
+		for( k=1;k<(int)s.size();++k ){
 			if( !isalnum( s[k] ) && s[k]!='_' ) break;
 		}
 		end=k;
 		DeclSeq *params=d_new DeclSeq();
 		string n=s.substr( start,end-start );
-		while( k<s.size() ){
+		while( k<(int)s.size() ){
 			Type *t=typeof(s[k++]);
 			int from=k;
 			for( ;isalnum(s[k])||s[k]=='_';++k ){}
@@ -110,7 +111,7 @@ static const char *linkRuntime(){
 						int n=atoi( s.substr( from,k-from ) );
 						defType=d_new ConstType( n );
 					}else{
-						float n=atof( s.substr( from,k-from ) );
+						float n=(float)atof( s.substr( from,k-from ) );
 						defType=d_new ConstType( n );
 					}
 				}
@@ -135,21 +136,21 @@ static const char *loadUserLib( const string &userlib ){
 	string lib="";
 	ifstream in(t.c_str());
 
-	next(in);
+	bnext(in);
 	while( curr ){
 
 		if( curr=='.' ){
 
-			if( next(in)!=-1 ) return "expecting identifier after '.'";
+			if( bnext(in)!=-1 ) return "expecting identifier after '.'";
 
 			if( text=="lib" ){
-				if( next(in)!=-2 ) return "expecting string after lib directive";
+				if( bnext(in)!=-2 ) return "expecting string after lib directive";
 				lib=text;
 
 			}else{
 				return "unknown decl directive";
 			}
-			next( in );
+			bnext( in );
 
 		}else if( curr==-1 ){
 
@@ -162,31 +163,31 @@ static const char *loadUserLib( const string &userlib ){
 			_ulibkws.insert( lower_id );
 
 			Type *ty=0;
-			switch( next(in) ){
+			switch( bnext(in) ){
 			case '%':ty=Type::int_type;break;
 			case '#':ty=Type::float_type;break;
 			case '$':ty=Type::string_type;break;
 			}
-			if( ty ) next(in);
+			if( ty ) bnext(in);
 			else ty=Type::void_type;
 
 			DeclSeq *params=d_new DeclSeq();
 
 			if( curr!='(' ) return "expecting '(' after function identifier";
-			next(in);
+			bnext(in);
 			if( curr!=')' ){
 				for(;;){
 					if( curr!=-1 ) break;
 					string arg=text;
 
 					Type *ty=0;
-					switch( next(in) ){
+					switch( bnext(in) ){
 					case '%':ty=Type::int_type;break;
 					case '#':ty=Type::float_type;break;
 					case '$':ty=Type::string_type;break;
 					case '*':ty=Type::null_type;break;
 					}
-					if( ty ) next(in);
+					if( ty ) bnext(in);
 					else ty=Type::int_type;
 
 					ConstType *defType=0;
@@ -194,7 +195,7 @@ static const char *loadUserLib( const string &userlib ){
 					Decl *d=params->insertDecl( arg,ty,DECL_PARAM,defType );
 
 					if( curr!=',' ) break;
-					next(in);
+					bnext(in);
 				}
 			}
 			if( curr!=')' ) return "expecting ')' after function decl";
@@ -205,11 +206,11 @@ static const char *loadUserLib( const string &userlib ){
 
 			runtimeEnviron->funcDecls->insertDecl( lower_id,fn,DECL_FUNC );
 
-			if( next(in)==':' ){	//real name?
-				next(in);
+			if( bnext(in)==':' ){	//real name?
+				bnext(in);
 				if( curr!=-1 && curr!=-2 ) return "expecting identifier or string after alias";
 				id=text;
-				next(in);
+				bnext(in);
 			}
 
 			userFuncs.push_back( UserFunc( lower_id,id,lib ) );
@@ -233,7 +234,7 @@ static const char *linkUserLibs(){
 	do{
 		if( err=loadUserLib( fd.cFileName ) ){
 			static char buf[64];
-			sprintf( buf,"Error in userlib '%s' - %s",fd.cFileName,err );
+			sprintf_s( buf,"Error in userlib '%s' - %s",fd.cFileName,err );
 			err=buf;break;
 		}
 
@@ -248,8 +249,15 @@ static const char *linkUserLibs(){
 
 const char *openLibs(){
 	
-	char *p=getenv( "blitzpath" );
-	if( !p ) return "Can't find blitzpath environment variable";
+	//char *p=getenv( "blitzpath" );
+
+
+	char *p;
+	size_t sz;
+	errno_t err=_dupenv_s(&p, &sz, "blitzpath");
+
+
+	if( err!=0 ) return "Can't find blitzpath environment variable";
 	home=string(p);
 
 	linkerHMOD=LoadLibrary( (home+"/bin/linker.dll").c_str() );

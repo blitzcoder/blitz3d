@@ -11,8 +11,6 @@
 
 #define DIRECTSOUND_VERSION 0x700
 #define DIRECTINPUT_VERSION 0x700
-#define DIRECTDRAW_VERSION 0x700
-#define DIRECT3D_VERSION 0x700
 
 #include <set>
 #include <map>
