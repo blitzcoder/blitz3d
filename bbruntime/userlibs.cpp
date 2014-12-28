@@ -27,7 +27,12 @@ void _bbLoadLibs( char *p ){
 
 	string home;
 
-	if( const char *t=getenv( "blitzpath" ) ) home=t;
+	char * t;
+	size_t sz;
+	errno_t err=_dupenv_s(&t, &sz, "blitzpath");
+	if (err == 0) home = t;
+
+	//if( const char *t=getenv( "blitzpath" ) ) home=t;
 
 	while( *p ){
 		HMODULE mod=LoadLibrary( p );

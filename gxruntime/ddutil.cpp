@@ -116,9 +116,9 @@ static void buildMask( ddSurf *surf ){
 	unsigned char *surf_p=(unsigned char*)desc.lpSurface;
 	PixelFormat fmt( desc.ddpfPixelFormat );
 
-	for( int y=0;y<desc.dwHeight;++y ){
+	for( int y=0;y<(int)desc.dwHeight;++y ){
 		unsigned char *p=surf_p;
-		for( int x=0;x<desc.dwWidth;++x ){
+		for( int x=0;x<(int)desc.dwWidth;++x ){
 			unsigned argb=fmt.getPixel( p );
 			unsigned rgb=argb&0xffffff;
 			unsigned a=rgb ? 0xff000000 : 0;
@@ -137,9 +137,9 @@ static void buildAlpha( ddSurf *surf,bool whiten ){
 	unsigned char *surf_p=(unsigned char*)desc.lpSurface;
 	PixelFormat fmt( desc.ddpfPixelFormat );
 
-	for( int y=0;y<desc.dwHeight;++y ){
+	for( int y=0;y<(int)desc.dwHeight;++y ){
 		unsigned char *p=surf_p;
-		for( int x=0;x<desc.dwWidth;++x ){
+		for( int x=0;x<(int)desc.dwWidth;++x ){
 			unsigned argb=fmt.getPixel( p );
 			unsigned alpha=(((argb>>16)&0xff)+((argb>>8)&0xff)+(argb&0xff))/3;
 			argb=(alpha<<24) | (argb & 0xffffff);
@@ -178,7 +178,7 @@ void ddUtil::buildMipMaps( ddSurf *surf ){
 		PixelFormat dest_fmt( dest_desc.ddpfPixelFormat );
 
 		if( src_desc.dwWidth==1 ){
-			for( int y=0;y<dest_desc.dwHeight;++y ){
+			for( int y=0;y<(int)dest_desc.dwHeight;++y ){
 				unsigned p1=src_fmt.getPixel( src_p );
 				unsigned p2=src_fmt.getPixel( src_p+src_desc.lPitch );
 				unsigned argb=
@@ -190,7 +190,7 @@ void ddUtil::buildMipMaps( ddSurf *surf ){
 				dest_p+=dest_desc.lPitch;
 			}
 		}else if( src_desc.dwHeight==1 ){
-			for( int x=0;x<dest_desc.dwWidth;++x ){
+			for( int x=0;x<(int)dest_desc.dwWidth;++x ){
 				unsigned p1=src_fmt.getPixel( src_p );
 				unsigned p2=src_fmt.getPixel( src_p+src_fmt.getPitch() );
 				unsigned argb=
@@ -202,10 +202,10 @@ void ddUtil::buildMipMaps( ddSurf *surf ){
 				dest_p+=dest_fmt.getPitch();
 			}
 		}else{
-			for( int y=0;y<dest_desc.dwHeight;++y ){
+			for( int y=0;y<(int)dest_desc.dwHeight;++y ){
 				unsigned char *src_t=src_p;
 				unsigned char *dest_t=dest_p;
-				for( int x=0;x<dest_desc.dwWidth;++x ){
+				for( int x=0;x<(int)dest_desc.dwWidth;++x ){
 
 					unsigned p1=src_fmt.getPixel( src_t );
 					unsigned p2=src_fmt.getPixel( src_t+src_fmt.getPitch() );
@@ -236,23 +236,37 @@ void ddUtil::buildMipMaps( ddSurf *surf ){
 
 void ddUtil::copy( ddSurf *dest,int dx,int dy,int dw,int dh,ddSurf *src,int sx,int sy,int sw,int sh ){
 
-	DDSURFACEDESC2 src_desc={sizeof(src_desc)};
-	src->Lock( 0,&src_desc,DDLOCK_WAIT,0 );
+	DDSURFACEDESC2 src_desc;
+	memset(&src_desc, 0, sizeof(DDSURFACEDESC2));
+	src_desc.dwSize = sizeof(DDSURFACEDESC2);
+	HRESULT res;
+	res=src->Lock( 0,&src_desc,DDLOCK_WAIT,0 );
+	if (res!=D3D_OK) MessageBoxA(NULL, "Cannot lock onto source surface", "Runtime error", MB_OK);
+	if ((src_desc.dwFlags&DDSD_LPSURFACE)==0)MessageBoxA(NULL, "Plopsys", "Runtime error", MB_OK);
+
 	PixelFormat src_fmt( src_desc.ddpfPixelFormat );
 	unsigned char *src_p=(unsigned char*)src_desc.lpSurface;
 	src_p+=src_desc.lPitch*sy+src_fmt.getPitch()*sx;
 
-	DDSURFACEDESC2 dest_desc={sizeof(dest_desc)};
-	dest->Lock( 0,&dest_desc,DDLOCK_WAIT,0 );
+	DDSURFACEDESC2 dest_desc = { sizeof(DDSURFACEDESC2) };
+
+	res=dest->Lock( 0,&dest_desc,DDLOCK_WAIT,0 );
+
+	if (res != D3D_OK) MessageBoxA(NULL, "Cannot lock onto destination surface", "Runtime error", MB_OK);
+	if ((dest_desc.dwFlags&DDSD_LPSURFACE)==0)MessageBoxA(NULL, "Plopsyd", "Runtime error", MB_OK);
+
 	PixelFormat dest_fmt( dest_desc.ddpfPixelFormat );
 	unsigned char *dest_p=(unsigned char *)dest_desc.lpSurface;
 	dest_p+=dest_desc.lPitch*dy+dest_fmt.getPitch()*dx;
 
-	for( int y=0;y<dh;++y ){
+	unsigned int col;
+
+	for( int y=0;y<dh-1;++y ){
 		unsigned char *dest=dest_p;
 		unsigned char *src=src_p+src_desc.lPitch*(y*sh/dh);
-		for( int x=0;x<dw;++x ){
-			dest_fmt.setPixel( dest,src_fmt.getPixel( src+src_fmt.getPitch()*(x*sw/dw) ) );
+		for( int x=0;x<dw-1;++x ){
+			col = src_fmt.getPixel(src + src_fmt.getPitch()*(x*sw / dw));
+			dest_fmt.setPixel( dest,col );
 			dest+=dest_fmt.getPitch();
 		}
 		dest_p+=dest_desc.lPitch;
@@ -260,11 +274,16 @@ void ddUtil::copy( ddSurf *dest,int dx,int dy,int dw,int dh,ddSurf *src,int sx,i
 
 	src->Unlock( 0 );
 	dest->Unlock( 0 );
+
+
+
 }
 
 ddSurf *ddUtil::createSurface( int w,int h,int flags,gxGraphics *gfx ){
 
 	DDSURFACEDESC2 desc={sizeof(desc)};
+	memset(&desc, 0, sizeof(DDSURFACEDESC2));
+	desc.dwSize = sizeof(desc);
 
 	desc.dwFlags=DDSD_CAPS;
 
@@ -338,7 +357,10 @@ IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
 	FILE *fp;
 
 	/* try to open the file */
-	fp = fopen(filename, "rb");
+	//fp = fopen(filename, "rb");
+
+	fopen_s(&fp, filename, "rb");
+
 	if(!fp) return NULL;
 
 	/* valid DDS? */
@@ -508,6 +530,8 @@ ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 		}
 	}
 
+	//if (flags & 2) flags -= 2;
+
 	ddSurf *dest=createSurface( width,height,flags,gfx );
 	if( !dest ){
 		src->Release();
@@ -517,6 +541,9 @@ ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 
 	int t_w=width,t_h=height;
 	if( flags & gxCanvas::CANVAS_TEXTURE ) adjustTexSize( &t_w,&t_h,gfx->dir3dDev );
+
+	//investigate here - summin wrong....
+
 	copy( dest,0,0,t_w,t_h,src,0,height-1,width,-height );
 
 	src->Release();

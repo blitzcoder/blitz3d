@@ -88,7 +88,7 @@ static inline void debugObject( Object *o ){
 static inline void debugColl( Object *o,int index ){
 	if( debug ){
 		debugObject(o);
-		if( index<1 || index>o->getCollisions().size() ) RTEX( "Collision index out of range" );
+		if( index<1 || index>(int)o->getCollisions().size() ) RTEX( "Collision index out of range" );
 	}
 }
 static inline void debugCamera( Camera *c ){
@@ -701,7 +701,7 @@ int  bbCountSurfaces( MeshModel *m ){
 Surface *  bbGetSurface( MeshModel *m,int index ){
 	if( debug ){
 		debugMesh(m);
-		if( index<1 || index>m->getSurfaces().size() ){
+		if( index<1 || index>(int)m->getSurfaces().size() ){
 			RTEX( "Surface Index out of range" );
 		}
 	}
@@ -823,15 +823,15 @@ float  bbVertexNZ( Surface *s,int n ){
 }
 float  bbVertexRed( Surface *s,int n ){
 	debugVertex(s,n);
-	return (s->getVertex(n).color&0xff0000)>>16;
+	return (float) ((s->getVertex(n).color&0xff0000)>>16);
 }
 float  bbVertexGreen( Surface *s,int n ){
 	debugVertex(s,n);
-	return (s->getVertex(n).color&0xff00)>>8;
+	return (float)((s->getVertex(n).color&0xff00)>>8);
 }
 float  bbVertexBlue( Surface *s,int n ){
 	debugVertex(s,n);
-	return s->getVertex(n).color&0xff;
+	return (float) (s->getVertex(n).color&0xff);
 }
 float  bbVertexAlpha( Surface *s,int n ){
 	debugVertex(s,n);
@@ -1113,17 +1113,20 @@ Entity *  bbCreateSprite( Entity *p ){
 }
 
 Entity *  bbLoadSprite( BBStr *file,int flags,Entity *p ){
-	debugParent(p);
+	debugParent(p);	
 	Texture t( *file,flags );
+	
 	delete file;if( !t.getCanvas(0) ) return 0;
 	Sprite *s=d_new Sprite();
+	
 	s->setTexture( 0,t,0 );
+	
 	s->setFX( gxScene::FX_FULLBRIGHT );
 
 	if( flags & gxCanvas::CANVAS_TEX_MASK ) s->setBlend( gxScene::BLEND_REPLACE );
 	else if( flags & gxCanvas::CANVAS_TEX_ALPHA ) s->setBlend( gxScene::BLEND_ALPHA );
 	else s->setBlend( gxScene::BLEND_ADD );
-
+	
 	return insertEntity( s,p );
 }
 
@@ -1226,8 +1229,8 @@ void  bbBSPLighting( Q3BSPModel *t,int lmap ){
 // TERRAIN COMMANDS //
 //////////////////////
 static float terrainHeight( Terrain *t,float x,float z ){
-	int ix=floor(x);
-	int iz=floor(z);
+	int ix=(int)(floor(x));
+	int iz=(int)floor(z);
 	float tx=x-ix,tz=z-iz;
 	float h0=t->getHeight(ix,iz);
 	float h1=t->getHeight(ix+1,iz);
