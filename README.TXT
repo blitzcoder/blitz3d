@@ -7,15 +7,17 @@ Follow steps to build
 
 2) Install fmodapi375win into same dir as blitz3d: http://www.fmod.org/files/public/fmodapi375win.zip
 
-3) Open blitz3d.sln with MSVC2010 or MSVC2013.
+3) Install dplayx.lib, dplay.h and dplobby.h into a folder 'dplay' created into same dir as blitzplus, files may have to be downloaded
 
-4) Build project 'bblaunch' using config 'Win32 Blitz3D Release'.
+4) Open blitz3d.sln with MSVC2010 or MSVC2013.
 
-5) Output files should end up in _release subdir.
+5) Build project 'bblaunch' using config 'Win32 Blitz3D Release'.
 
-6) Also copy fmodapi375win/api/fmod.dll to _release/bin.
+6) Output files should end up in _release subdir.
 
-7) Done?
+7) Also copy fmodapi375win/api/fmod.dll to _release/bin.
+
+8) Done?
 
 
 Known problems...
