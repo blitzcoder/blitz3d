@@ -3,21 +3,23 @@ Blitz3D Visual Studio 2010 compatible release.
 
 Follow steps to build
 
-1) Install freeimage241 into same dir as blitz3d: http://monkeycoder.co.nz/downloads/freeimage241.zip
+1) Install directx7 sdk into same dir as blitzplus using dx7_sdk as folder name
 
-2) Install fmodapi375win into same dir as blitz3d: http://www.fmod.org/files/public/fmodapi375win.zip
+2) Install freeimage241 into same dir as blitz3d: http://monkeycoder.co.nz/downloads/freeimage241.zip
 
-3) Install dplayx.lib, dplay.h and dplobby.h into a folder 'dplay' created into same dir as blitzplus, files may have to be downloaded
+3) Install fmodapi375win into same dir as blitz3d: http://www.fmod.org/files/public/fmodapi375win.zip
 
-4) Open blitz3d.sln with MSVC2010 or MSVC2013.
+4) Install dplayx.lib, dplay.h and dplobby.h into a folder 'dplay' created into same dir as blitzplus, files may have to be downloaded
 
-5) Build project 'bblaunch' using config 'Win32 Blitz3D Release'.
+5) Open blitz3d.sln with MSVC2010 or MSVC2013.
 
-6) Output files should end up in _release subdir.
+6) Build project 'bblaunch' using config 'Win32 Blitz3D Release'.
 
-7) Also copy fmodapi375win/api/fmod.dll to _release/bin.
+7) Output files should end up in _release subdir.
 
-8) Done?
+8) Also copy fmodapi375win/api/fmod.dll to _release/bin.
+
+9) Done?
 
 
 Known problems...
