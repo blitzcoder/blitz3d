@@ -16,3 +16,4 @@ bbruntime_dll/bbruntime_dll.vcxproj.filters
 *.sdf
 *.filters
 *.pro
+*.bb

@@ -158,7 +158,7 @@ static gxCanvas *tformCanvas( gxCanvas *c,float m[2][2],int x_handle,int y_handl
 	int iw=(int)(maxx-minx),ih=(int)(maxy-miny);
 
 	gxCanvas *t=gx_graphics->createCanvas( iw,ih,0 );
-	t->setHandle((int) -minx,(int)-miny );
+	t->setHandle( (int)-minx,(int)-miny );
 	t->setMask( c->getMask() );
 
 	c->lock();
@@ -169,7 +169,7 @@ static gxCanvas *tformCanvas( gxCanvas *c,float m[2][2],int x_handle,int y_handl
 		v.x=minx+.5f;
 		for( int x=0;x<iw;++v.x,++x ){
 			vec2 q=vrot(i,v);
-			unsigned rgb=filter ? getPixel( c,q.x+ox,q.y+oy ) : c->getPixel( (int)floor(q.x+ox),(int)floor(q.y+oy) );
+			unsigned rgb=filter ? getPixel( c,q.x+ox,q.y+oy ) : c->getPixel((int) floor(q.x+ox),(int)floor(q.y+oy) );
 			t->setPixel( x,y,rgb );
 		}
 	}
@@ -1070,7 +1070,7 @@ BBStr *bbInput( BBStr *prompt ){
 		//render all text
 		//calc curs x and width
 		int cx=curs_x+curr_font->getWidth( str.substr( 0,curs ) );
-		int cw=curr_font->getWidth( curs<(int)(str.size()) ? str.substr( curs,1 ) : "X" );
+		int cw=curr_font->getWidth( curs<(int)str.size() ? str.substr( curs,1 ) : "X" );
 
 		//wait for a key
 		int key=0,st=gx_runtime->getMilliSecs(),tc=-1;

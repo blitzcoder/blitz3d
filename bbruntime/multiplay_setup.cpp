@@ -144,7 +144,7 @@ static bool enumSessions( HWND hwnd ){
 	int n=dirPlay->EnumSessions( &desc,0,enumSession,0,DPENUMSESSIONS_ASYNC );
 	if( n>=0 ){
 		if( !timer ) SetTimer( hwnd,timer=1,1000,0 );
-		for (int k = 0; k<(int)sessions.size(); ++k){
+		for( int k=0;k<(int)sessions.size();++k ){
 			SendDlgItemMessage( hwnd,IDC_GAMELIST,LB_ADDSTRING,0,(LPARAM)_strdup( sessions[k]->name.c_str() ) );
 		}
 		if( !sessions.size() ){
@@ -161,7 +161,7 @@ static bool enumSessions( HWND hwnd ){
 
 static bool connect( HWND hwnd ){
 	int con=SendDlgItemMessage( hwnd,IDC_CONNECTIONS,CB_GETCURSEL,0,0 );
-	if (con<1 || con >= (int)connections.size()) return false;
+	if( con<1 || con>=(int)connections.size() ) return false;
 
 	closeDirPlay( hwnd );
 	if( openDirPlay( hwnd ) ){
@@ -203,7 +203,7 @@ static BOOL CALLBACK dialogProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam 
 			}
 			closeDirPlay( hwnd );
 		}
-		for (k = 0; k<(int)connections.size(); ++k){
+		for( k=0;k<(int)connections.size();++k ){
 			string t=connections[k]->name;
 			SendDlgItemMessage( hwnd,IDC_CONNECTIONS,CB_ADDSTRING,0,(LPARAM)t.c_str() );
 		}
@@ -356,7 +356,7 @@ int multiplay_setup_join( const string &game_name,const string &ip_add ){
 						desc.dwSize=sizeof(desc);
 						desc.guidApplication=GUID_NULL;
 						if( dirPlay->EnumSessions( &desc,0,enumSession,0,0 )>=0 ){
-							for (int k = 0; k<(int)sessions.size(); ++k){
+							for( int k=0;k<(int)sessions.size();++k ){
 								if( sessions[k]->name!=game_name ) continue;
 								desc.guidInstance=sessions[k]->guid;
 								if( dirPlay->Open( &desc,DPOPEN_JOIN )>=0 ){

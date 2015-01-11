@@ -91,11 +91,11 @@ int bbMouseX(){
 }
 
 int bbMouseY(){
-	return (int)gx_mouse->getAxisState(1);
+	return (int)gx_mouse->getAxisState( 1 );
 }
 
 int bbMouseZ(){
-	return (int)gx_mouse->getAxisState(2) / 120;
+	return (int)gx_mouse->getAxisState( 2 )/120;
 }
 
 int bbMouseXSpeed(){
@@ -129,7 +129,7 @@ int bbJoyType( int port ){
 }
 
 int bbJoyDown( int n,int port ){
-	if (port<0 || port >= (int)gx_joysticks.size()) return 0;
+	if( port<0 || port>=(int)gx_joysticks.size() ) return 0;
 	return gx_joysticks[port]->keyDown( n );
 }
 

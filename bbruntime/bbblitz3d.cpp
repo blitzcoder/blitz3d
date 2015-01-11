@@ -823,7 +823,7 @@ float  bbVertexNZ( Surface *s,int n ){
 }
 float  bbVertexRed( Surface *s,int n ){
 	debugVertex(s,n);
-	return (float) ((s->getVertex(n).color&0xff0000)>>16);
+	return (float)((s->getVertex(n).color&0xff0000)>>16);
 }
 float  bbVertexGreen( Surface *s,int n ){
 	debugVertex(s,n);
@@ -831,7 +831,7 @@ float  bbVertexGreen( Surface *s,int n ){
 }
 float  bbVertexBlue( Surface *s,int n ){
 	debugVertex(s,n);
-	return (float) (s->getVertex(n).color&0xff);
+	return (float)(s->getVertex(n).color&0xff);
 }
 float  bbVertexAlpha( Surface *s,int n ){
 	debugVertex(s,n);
@@ -1226,7 +1226,7 @@ void  bbBSPLighting( Q3BSPModel *t,int lmap ){
 // TERRAIN COMMANDS //
 //////////////////////
 static float terrainHeight( Terrain *t,float x,float z ){
-	int ix=(int)(floor(x));
+	int ix=(int)floor(x);
 	int iz=(int)floor(z);
 	float tx=x-ix,tz=z-iz;
 	float h0=t->getHeight(ix,iz);

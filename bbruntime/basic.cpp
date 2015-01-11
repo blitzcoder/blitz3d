@@ -460,7 +460,7 @@ float _bbReadFloat(){
 	case BBTYPE_END:RTEX( "Out of data" );return 0;
 	case BBTYPE_INT:return (float)dataPtr++->field.INT;
 	case BBTYPE_FLT:return dataPtr++->field.FLT;
-	case BBTYPE_CSTR:return (float)(atof( dataPtr++->field.CSTR ));
+	case BBTYPE_CSTR:return (float)atof( dataPtr++->field.CSTR );
 	default:RTEX( "Bad data type" );return 0;
 	}
 }
