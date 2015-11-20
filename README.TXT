@@ -57,7 +57,7 @@ Ide and Debugger require MFC which is included with MSVC 6.0, but not with later
 You can grab the prebuilt free version of blitz3d from www.blitzbasic.com.
 
 Steps to build:
-1) Install directx7 sdk into same dir as blitz3d: 
+1) Install directx7 sdk into same dir as blitz3d:, the foldername should be DX7_Sdk 
 
 2) Install freeimage241 into same dir as blitz3d: http://monkeycoder.co.nz/downloads/freeimage241.zip
 
