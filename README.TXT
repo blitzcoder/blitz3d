@@ -7,6 +7,18 @@ Steps to build:
 
 2) Install freeimage241 into same dir as blitz3d: http://monkeycoder.co.nz/downloads/freeimage241.zip
 
+PLEASE NOTE - IMPORTANT
+=======================
+You will need to edit the freeimage.h file and modify the following line (normally should be line #206)
+
+typedef FIBITMAP *(DLL_CALLCONV * FI_AllocateProc)(int width, int height, int bpp, unsigned red_mask FI_DEFAULT(0), unsigned green_mask FI_DEFAULT(0), unsigned blue_mask FI_DEFAULT(0));
+
+to this...
+
+typedef FIBITMAP *(DLL_CALLCONV * FI_AllocateProc)(int width, int height, int bpp, unsigned red_mask , unsigned green_mask , unsigned blue_mask);
+
+You have to modify this line because the original line of code is not compatible with versions of visual studio that are newer than vs6.  Changing this line will remove any compile error concerning this bug
+
 3) Install fmodapi375win into same dir as blitz3d: http://www.fmod.org/files/public/fmodapi375win.zip
 
 4) Open blitz3d workspace in MSVC 6.0.
